@@ -55,7 +55,7 @@ parser.add_argument('--tag', help='tag of experiment')
 parser.add_argument('--eval', action='store_true', help='Perform evaluation only')
 parser.add_argument('--throughput', action='store_true', help='Test throughput only')
 # parser.add_argument("--dataset_name", default="datasets")
-parser.add_argument("--n_class", default=4, type=int)
+parser.add_argument("--n_class", default=9, type=int)
 parser.add_argument("--num_workers", default=8, type=int)
 parser.add_argument("--eval_interval", default=1, type=int)
 
@@ -92,10 +92,15 @@ if __name__ == "__main__":
     args.root_path = dataset_config[dataset_name]['root_path']
     args.list_dir = dataset_config[dataset_name]['list_dir']
 
+    print('arg:', args)
+
     if not os.path.exists(args.output_dir):
         os.makedirs(args.output_dir)
     net = ViT_seg(config, img_size=args.img_size, num_classes=args.num_classes).cuda()
-    net.load_from(config)
+
+    # temporary to disable pretrained
+    print('train from scratch')
+    # net.load_from(config)
 
     # trainer = {'Synapse': trainer_synapse}
     trainer_synapse(args, net, args.output_dir)

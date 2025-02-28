@@ -28,9 +28,9 @@ def trainer_synapse(args, model, snapshot_path):
     db_train = Synapse_dataset(base_dir=args.root_path, list_dir=args.list_dir, split="train",
                                transform=transforms.Compose(
                                    [RandomGenerator(output_size=[args.img_size, args.img_size])]))
-    db_val = Synapse_dataset(base_dir=args.root_path, list_dir=args.list_dir, split="val",
-                             transform=transforms.Compose(
-                                 [RandomGenerator(output_size=[args.img_size, args.img_size])]))
+    # db_val = Synapse_dataset(base_dir=args.root_path, list_dir=args.list_dir, split="val",
+    #                          transform=transforms.Compose(
+    #                              [RandomGenerator(output_size=[args.img_size, args.img_size])]))
     print("The length of train set is: {}".format(len(db_train)))
 
     def worker_init_fn(worker_id):
@@ -64,6 +64,13 @@ def trainer_synapse(args, model, snapshot_path):
             image_batch, label_batch = sampled_batch['image'], sampled_batch['label']
             image_batch, label_batch = image_batch.cuda(), label_batch.cuda()
             outputs = model(image_batch)
+            # print('outputs shape:', outputs.shape)
+            # print('label_batch shape:', label_batch.shape)
+            # print("Unique label_batch values:", torch.unique(label_batch))
+            # print('outputs:', outputs)
+            # print('label_batch:', label_batch)
+            # exit("Stopping execution here.")
+
             loss_ce = ce_loss(outputs, label_batch[:].long())
             loss_dice = dice_loss(outputs, label_batch, softmax=True)
             loss = 0.4 * loss_ce + 0.6 * loss_dice
